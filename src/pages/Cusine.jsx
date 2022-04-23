@@ -27,7 +27,6 @@ function Cusine() {
 
   useEffect(() => {
     getCuisine(params.type);
-    console.log(params);
   }, [params.type]);
 
   return (
