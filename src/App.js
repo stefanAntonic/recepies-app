@@ -1,16 +1,17 @@
 import Pages from "./pages/Pages";
-import Category from "./components/Category";
-import {BrowserRouter} from 'react-router-dom'
+import BackToTopBtn from "../src/components/layout/BackToTopBtn";
+import Navbar from "./components/layout/Navbar";
+import { BrowserRouter, Route } from "react-router-dom";
+import { RecipeProvider } from "../src/context/RecipesContext";
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
-      <Category />
-      <Pages />
+        <Navbar />
+        <Pages />
+        <BackToTopBtn />
       </BrowserRouter>
-     
-       
     </div>
   );
 }

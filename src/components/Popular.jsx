@@ -1,32 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useContext} from "react";
+import RecipeInfo from "../pages/RecipeInfo";
 import styled from "styled-components";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
+import { Link } from "react-router-dom";
 import "@splidejs/react-splide/css";
+import RecipeContext from "../context/RecipesContext";
 
-const spoonApi = process.env.REACT_APP_SPOON_API_KEY;
+
+const spoonApi = process.env.REACT_APP_SPOON_API_KEY2;
 
 function Popular() {
-  const [popular, setPopular] = useState([]);
-
+  const {recipes, loading, getRecipes} = useContext(RecipeContext)
   useEffect(() => {
-    getPopular();
+    getRecipes();
   }, []);
 
-  const getPopular = async () => {
-    const check = localStorage.getItem("popular");
 
-    if (check) {
-      setPopular(JSON.parse(check));
-    } else {
-      const api = await fetch(
-        `https://api.spoonacular.com/recipes/random?apiKey=${spoonApi}&number=9`
-      );
-      const data = await api.json();
-      localStorage.setItem('popular', JSON.stringify(data.recipes));
-
-      setPopular(data.recipes);
-    }
-  };
 
   return (
     <div>
@@ -35,18 +24,22 @@ function Popular() {
         <Splide
           options={{
             perPage: 3,
-            arrows: false,
+            arrows: true,
             pagination: false,
             drag: "free",
             gap: "5rem",
           }}
         >
-          {popular.map((recipe) => {
+          {recipes.map((recipe) => {
+              
+
             return (
               <SplideSlide key={recipe.id}>
                 <Card key={recipe.id}>
-                  <p>{recipe.title}</p>
+                  <StyledLink to={`recipes/${recipe.id}/information`}>{recipe.title}</StyledLink>
                   <img src={recipe.image} alt={recipe.title} />
+                
+                  
                   <Gradient />
                 </Card>
               </SplideSlide>
@@ -57,7 +50,23 @@ function Popular() {
     </div>
   );
 }
-
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  bottom: 0%;
+  transform: translate(-50%, 0%);
+  color: white;
+  width: 100;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  height: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 const Wrapper = styled.div`
   margin: 4rem 0rem;
 `;

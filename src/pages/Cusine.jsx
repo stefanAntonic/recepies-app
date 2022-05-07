@@ -1,46 +1,45 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
-
-const spoonApi = process.env.REACT_APP_SPOON_API_KEY;
+import { useParams, Link } from "react-router-dom";
+import CuisineContext from "../context/CuisineContext";
 
 function Cusine() {
+  const { cuisine, getCuisine} = useContext(CuisineContext);
+  const [loading, setLoading] = useState(true)
   let params = useParams();
-
-  const [cuisine, setCuisine] = useState([]);
-
-  const chech = localStorage.getItem('cousine')
-
-  if (chech) {
-    setCuisine(JSON.parse(chech))
-  }
-
-  const getCuisine = async (name) => {
-    const data = await fetch(
-      `https://api.spoonacular.com/recipes/complexSearch?apiKey=${spoonApi}&cuisine=${name}`
-    );
-    const recipes = await data.json();
-    setCuisine(recipes.results);
-    localStorage.setItem('cuisine', JSON.stringify(data.recipes))
-  };
+  // console.log(params.type);
+  console.log(cuisine);
+  
 
   useEffect(() => {
-    getCuisine(params.type);
-  }, [params.type]);
-
-  return (
+  getCuisine(params)
+  setLoading(false)
+  
+  },[params])
+  
+ if(loading){
+   return console.log('loading');
+ }
+  // Here i need to connect this link to recipe details
+  return ( 
     <Grid>
       {cuisine.map((item) => {
         return (
           <Card key={item.id}>
             <img src={item.image} alt={item.title} />
-            <h4>{item.title}</h4>
+            <StyledLink to={`/recipes/${item.id}/information`}>
+              {item.title}
+            </StyledLink>
           </Card>
         );
       })}
     </Grid>
   );
 }
+const StyledLink = styled(Link)`
+  text-align: center;
+  padding: 1rem;
+`;
 
 const Grid = styled.div`
   display: grid;
