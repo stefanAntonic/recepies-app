@@ -1,57 +1,47 @@
-import { useEffect, useState } from "react";
+import { useEffect, useContext } from "react";
 import styled from "styled-components";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
+import { Link } from "react-router-dom";
 import "@splidejs/react-splide/css";
-
-
-const spoonApi = process.env.REACT_APP_SPOON_API_KEY;
+import RecipeContext from "../context/RecipesContext";
 
 
 function Veggie() {
-
-  const [veggie, setVeggie] = useState([]);
+  const {recipes, loading, getRecipes} = useContext(RecipeContext)
 
   useEffect(() => {
-    getVeggie();
+    getRecipes();
   }, []);
 
-  const getVeggie = async () => {
-    const check = localStorage.getItem("veggie");
+  // Beacause is in use localstorage im not using this line
 
-    if (check) {
-      setVeggie(JSON.parse(check));
-    } else {
-      const api = await fetch(
-        `https://api.spoonacular.com/recipes/random?apiKey=${spoonApi}&number=9&tags=vegan`
-      );
-      const data = await api.json();
-      localStorage.setItem('vegie', JSON.stringify(data.recipes));
+  // let filterRecipe = recipes.filter((recipe) => {
+  //   return recipe.vegan
 
-      setVeggie(data.recipes);
-    }
-  };
-
-
+  // }) 
+  
 
   return (
     <div>
-       <Wrapper>
+      <Wrapper>
         <h3>Our Vegeterian picks </h3>
         <Splide
           options={{
             perPage: 4,
-            arrows: false,
+            arrows: true,
             pagination: false,
             drag: "free",
             gap: "5rem",
           }}
         >
-          {veggie.map((recipe) => {
+          {recipes.map((recipe) => {
             return (
               <SplideSlide key={recipe.id}>
                 <Card key={recipe.id}>
-                  <p>{recipe.title}</p>
+                <StyledLink to={`recipes/${recipe.id}/information`}>{recipe.title}</StyledLink>
+
                   <img src={recipe.image} alt={recipe.title} />
+
                   <Gradient />
                 </Card>
               </SplideSlide>
@@ -60,10 +50,26 @@ function Veggie() {
         </Splide>
       </Wrapper>
     </div>
-  )
-};
+  );
+}
 
-
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  bottom: 0%;
+  transform: translate(-50%, 0%);
+  color: white;
+  width: 100;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  height: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 const Wrapper = styled.div`
   margin: 4rem 0rem;
 `;
@@ -109,5 +115,4 @@ const Gradient = styled.div`
   background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
 `;
 
-
-export default Veggie
+export default Veggie;
